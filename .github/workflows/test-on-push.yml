@@ -1,0 +1,25 @@
+name: Validate Python e2e
+on:
+  push:
+
+jobs:
+  test-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          default: true
+      - name: Rust unit tests
+        run: cargo test
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+      - name: Python unit tests
+        run: |
+          python -m venv venv3
+          venv3\Scripts\Activate.ps1
+          python -m pip install maturin numpy
+          maturin develop
+          python test_guess_the_number.py
